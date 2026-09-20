@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: virpm-annotation
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: ./
+    plan: starter
+    autoDeploy: true
+    healthCheckPath: /
+    envVars:
+      - key: SUBSET
+        value: core-1000
