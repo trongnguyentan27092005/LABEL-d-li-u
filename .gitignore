@@ -1,8 +1,9 @@
-# ViRPM source data, images, annotations, and local runtime files must never be published.
-Data/
+﻿# ViRPM source data, images, annotations, and local runtime files must never be published.
+/Data/
 Label/data/
 Label/*.log
 __pycache__/
 *.py[cod]
 .env
 .venv/
+
