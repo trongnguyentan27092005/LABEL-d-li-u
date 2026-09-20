@@ -1,4 +1,4 @@
-﻿"""Create blind, balanced pilot tasks for the public GitHub Pages annotator.
+"""Create blind, balanced pilot tasks for the public GitHub Pages annotator.
 
 Selection labels are used only here to stratify the sample.  They are never
 written to the public JSON consumed by the web application.
@@ -8,6 +8,7 @@ from __future__ import annotations
 import json
 import random
 import shutil
+from PIL import Image
 from collections import Counter
 from pathlib import Path
 
@@ -29,7 +30,11 @@ def copy_asset(relative: str) -> str:
     target = ASSETS / relative
     if source.is_file() and not target.exists():
         target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(source, target)
+        with Image.open(source) as image:
+            if image.mode not in {"RGB", "L"}:
+                image = image.convert("RGB")
+            image.thumbnail((640, 640))
+            image.save(target, quality=72, optimize=True)
     return "assets/" + relative.replace("\\", "/")
 
 
@@ -37,6 +42,8 @@ def main() -> None:
     rows = json.loads(SOURCE.read_text(encoding="utf-8"))
     OUTPUT.mkdir(parents=True, exist_ok=True)
     (PUBLIC / "data").mkdir(parents=True, exist_ok=True)
+    if ASSETS.exists():
+        shutil.rmtree(ASSETS)
 
     # T2T: exactly 10 rows from each of the 10 diagnostic groups.
     t2t = []
@@ -97,4 +104,5 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
 
